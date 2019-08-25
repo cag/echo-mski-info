@@ -11,8 +11,8 @@ const server = http.createServer(async (req, res) => {
         const { url } = req
         const { host, referer } = req.headers
 
-        const match = host.match(new RegExp(`^echo\.(.*)\.${appHostname}$`, 'i'))
-        const targetHost = match && match[1]
+        const match = host.match(new RegExp(`^echo_-_(.*)\.${appHostname}$`, 'i'))
+        const targetHost = match && match[1].replace(/_\-_/g, '.')
         const scheme = referer && referer.startsWith('https') ? 'https' : 'http'
 
         if(!targetHost)
