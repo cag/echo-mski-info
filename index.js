@@ -35,10 +35,14 @@ const server = http.createServer(async (req, res) => {
             ...proxiedRes.headers,
             'access-control-allow-origin': appHostname
         });
-        proxiedRes.data.pipe(res, { end: false });
-        proxiedRes.data.on('end', () => {
-          res.end(`<script type="text/javascript">document.domain="${ appHostname }"</script>\n`);
-        });
+        if(proxiedRes.headers['content-type'] === 'text/html') {
+            proxiedRes.data.pipe(res, { end: false });
+            proxiedRes.data.on('end', () => {
+              res.end(`<script type="text/javascript">document.domain="${ appHostname }"</script>\n`);
+            });
+        } else {
+            proxiedRes.data.pipe(res)
+        }
     } else {
         res.writeHead(500, { 'Content-Type': 'text/plain' });
         res.end('' + error);
